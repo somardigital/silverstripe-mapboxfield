@@ -1,35 +1,41 @@
 
 class MapboxField {
-  /**
-   * @param {jQuery} $container
-   */
   constructor($container) {
     this.$container = $container;
     this.rendered = false;
   }
 
   /**
-   * @returns {string}
-   * @private
+   * Gets the Mapbox token from the window.
+   * Inserted via CustomScript in LeftAndMainExtension.
+   * Value must be defined in config yml.
    */
   static _getAccessToken() {
     return window.mapboxAccessToken;
   }
 
   /**
-   * @returns {string[]}
-   * @private
+   * Gets the Mapbox token from the window.
+   * Inserted via CustomScript in LeftAndMainExtension.
+   * Will load default style ("mapbox://styles/mapbox/basic-v9") if not defined in your own yml.
    */
-  _getLngLatValue() {
-    return [
-        this._getLngField().val(),
-        this._getLatField().val()
-    ]
+  static _getMapStyle() {
+    return window.mapStyle;
   }
 
   /**
-   * @param {[]} coords
-   * @private
+   * Returns the values of Latitude and Longitude as an array.
+   * Added default values in case it is undefined.
+   */
+  _getLngLatValue() {
+    const lngVal = this._getLngField().val() || 174.7762;
+    const latVal = this._getLatField().val() || -41.2865;
+
+    return [lngVal, latVal]
+  }
+
+  /**
+   * Sets the Latitude and Longitude.
    */
   _setLngLatValue(coords) {
     this._getLngField().val(coords[0]).change();
@@ -37,35 +43,42 @@ class MapboxField {
   }
 
   /**
-   * @returns {jQuery}
-   * @private
+   * Gets the Silverstripe Longitude field by data attribute.
    */
   _getLngField() {
     return this.$container.find('input[data-mapbox-field="Longitude"]');
   }
 
   /**
-   * @returns {jQuery}
-   * @private
+   * Gets the Silverstripe Latitude field by data attribute.
    */
   _getLatField() {
     return this.$container.find('input[data-mapbox-field="Latitude"]');
   }
 
   /**
-   * Render the map
+   * Handle the marker when dragged mouse on map.
+   */
+  _onMarkerUpdate(marker) {
+    const lngLat = marker.getLngLat();
+    this._setLngLatValue([lngLat.lng, lngLat.lat]);
+  }
+
+  /**
+   * Render the map.
    */
   render() {
     if (this.rendered) {
       return;
     }
 
-    // Set up map
+    // Set up map via MapboxGL script
     mapboxgl.accessToken = MapboxField._getAccessToken();
+
     const map = new mapboxgl.Map({
-      center: this._getLngLatValue(),
       container: this.$container.find('.mapbox__map').get(0),
-      style: 'mapbox://styles/mapbox/basic-v9',
+      center: this._getLngLatValue(),
+      style: MapboxField._getMapStyle(),
       zoom: 15
     });
 
@@ -76,7 +89,7 @@ class MapboxField {
         .setLngLat(this._getLngLatValue())
         .addTo(map);
 
-    // Udpdate the coordinates after dragging marker
+    // Update the coordinates after dragging marker
     marker.on('dragend', () => {
       this._onMarkerUpdate(marker);
     });
@@ -96,15 +109,6 @@ class MapboxField {
     map.addControl(new mapboxgl.NavigationControl());
 
     this.rendered = true;
-  }
-
-  /**
-   * @param {Object} marker
-   * @private
-   */
-  _onMarkerUpdate(marker) {
-    const lngLat = marker.getLngLat();
-    this._setLngLatValue([lngLat.lng, lngLat.lat]);
   }
 }
 
