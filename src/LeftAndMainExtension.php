@@ -7,7 +7,7 @@ use SilverStripe\View\Requirements;
 
 class LeftAndMainExtension extends Extension
 {
-    public function onAfterInit()
+    protected function onAfterInit(): void
     {
         $config = MapboxField::config();
 

@@ -1,12 +1,13 @@
 {
 	"name": "bigfork/silverstripe-mapboxfield",
 	"type": "silverstripe-vendormodule",
-	"description": "Mapbox CMS field for SilverStripe 4",
+	"description": "Mapbox CMS field for Silverstripe CMS 6",
 	"keywords": ["silverstripe", "map", "mapbox"],
 	"license": "BSD-3-Clause",
 	"require": {
-		"silverstripe/admin": "^1 || ^2",
-		"silverstripe/framework": "^4 || ^5"
+		"php": "^8.3",
+		"silverstripe/admin": "^3",
+		"silverstripe/framework": "^6"
 	},
 	"autoload": {
 		"psr-4": {
@@ -15,7 +16,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "1.x-dev"
+			"dev-main": "3.x-dev"
 		},
 		"expose": [
 			"client/dist"

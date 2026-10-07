@@ -2,7 +2,6 @@
 
 namespace Bigfork\SilverStripeMapboxField;
 
-use http\Exception\InvalidArgumentException;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\HiddenField;
 
